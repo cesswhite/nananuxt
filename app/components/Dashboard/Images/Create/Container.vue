@@ -8,6 +8,11 @@
                         <UTextarea v-model="state.prompt" class="w-full" />
                     </UFormField>
                 </div>
+                <div class="col-span-full ?">
+                    <UFormField label="Model" name="model" size="lg">
+                        <USelect v-model="state.model" :items="modelOptions" value-key="value" label-key="label" />
+                    </UFormField>
+                </div>
                 <div class="col-span-full mt-4 flex gap-2">
                     <UButton block size="lg" class="cursor-pointer flex-1" :loading="loading" @click="generateImage">
                         Generate Image
@@ -48,6 +53,8 @@
 
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
+import type { SelectItem } from '@nuxt/ui'
+
 
 const imageUrl = ref<string | null>(null);
 const gptResponse = ref<string | null>(null);
@@ -57,8 +64,14 @@ const loadingSurprise = ref(false);
 const error = ref<string | null>(null);
 
 
+const modelOptions = ref<SelectItem[]>([
+    { label: 'Nano Banana', value: false },
+    { label: 'Nano Banana Pro', value: true }
+])
+
 const state = reactive({
     prompt: undefined as string | undefined,
+    model: false as boolean,
     aspect_ratio: undefined as string | undefined,
     output_format: undefined as string | undefined
 })
@@ -79,6 +92,7 @@ async function generateImage() {
             method: 'POST',
             body: {
                 prompt: state.prompt || "The most beautiful sunset in the world",
+                isPro: state.model,
                 aspect_ratio: state.aspect_ratio || "4:3",
                 output_format: state.output_format || "png"
             }
