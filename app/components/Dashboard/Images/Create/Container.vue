@@ -25,8 +25,11 @@
             </UForm>
 
             <div v-if="imageUrl" class="mt-4 relative">
-                <UButton icon="i-lucide-x" size="sm" color="neutral" variant="solid" class="absolute top-2 right-2 z-10"
-                    @click="clearImage" />
+                <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <UButton icon="i-lucide-refresh-cw" size="sm" color="primary" variant="solid" :loading="loading"
+                        @click="regenerateImage" />
+                    <UButton icon="i-lucide-x" size="sm" color="neutral" variant="solid" @click="clearImage" />
+                </div>
                 <NuxtImg :src="imageUrl" alt="Generated image" class="rounded-lg shadow-lg max-w-full h-auto"
                     loading="lazy" />
             </div>
@@ -120,6 +123,14 @@ async function generateGptResponse() {
 
 function clearImage() {
     imageUrl.value = null;
+}
+
+async function regenerateImage() {
+    if (!state.prompt) {
+        error.value = 'No prompt available to regenerate';
+        return;
+    }
+    await generateImage();
 }
 
 function clearGptResponse() {
